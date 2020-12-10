@@ -39,6 +39,25 @@ urouter.post('/',(req,res)=>{
     newUser.save('users').then(user => res.json(user)).catch(err => console.log(err));
 })
 
+urouter.put('/review/:userId/:mvId', (req,res) => {
+    User.findById(req.params.userId).then(user => {
+        let reviews = user.reviews;
+        for(var i=0; i<reviews.length; i++){
+            if(reviews[i].movieId == req.params.mvId){
+                res.json({msg:'review exists'})
+            }
+            else{
+                User.findByIdAndUpdate(req.params.userId, {$push :{reviews: req.body}}).then(()=>{
+                    User.findById(req.params.userId).then((user) => {
+                        res.json(user);
+                    })
+                })
+            }
+        }
+    })
+})
+
+
 /*urouter.put('/user/:id',(req,res)=>{
     User.findById(req.params.id).then((user)=>{
         user.username='haha';
